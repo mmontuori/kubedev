@@ -25,9 +25,16 @@ spec:
       labels:
         app: website
     spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data-volume-claim
       containers:
       - name: website
         image: mmontuori/web-site:latest
         ports:
-        - containerPort: 80
+          - containerPort: 80
+        volumeMounts:
+          - name: data
+            mountPath: "/usr/share/nginx/html"
 

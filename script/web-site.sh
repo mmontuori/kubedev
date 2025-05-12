@@ -21,6 +21,9 @@ else
     echo "Namespace '${namespace}' created successfully."
 fi
 
+echo "Creating the PVC..."
+minikube kubectl -- apply -f deployment/data-volume.yaml
+
 echo "Creating website pod..."
 minikube kubectl -- apply -f deployment/nginx-web-site.yaml
 
