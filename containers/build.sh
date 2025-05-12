@@ -1,7 +1,14 @@
 #!/bin/bash
 
-image="$1"
+export image="$1"
+export directory="$2"
 
-docker build -t ${image} .
+if [ "$directory" == "" ]; then
+  export directory="html"
+fi
 
-docker push ${image}
+docker build -t ${image} --build-arg ${directory} .
+
+if echo $image | grep "^mmontuori">/dev/null; then
+    docker push ${image}
+fi
