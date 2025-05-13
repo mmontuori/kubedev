@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.namespaceValue }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data-volume-claim
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image.repository }}
+        ports:
+          - containerPort: {{ .Values.service.port }}
+        volumeMounts:
+          - name: data
+            mountPath: {{ .Values.volume.mountPath }}

@@ -1,0 +1,17 @@
+replicaCount: 1
+namespaceValue: website
+
+image:
+  repository: mmontuori/web-site:latest
+  pullPolicy: IfNotPresent
+
+volume:
+  name: data-volume
+  claimName: data-volume-claim
+  path: /opt/kube/data
+  mountPath: /usr/share/nginx/html
+  capacity: 10Gi
+  claimCapacity: 3Gi
+  
+service:
+  port: 80
