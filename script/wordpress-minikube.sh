@@ -20,7 +20,8 @@ else
     echo "Namespace 'wordpress' created successfully."
 fi
 
-minikube kubectl -- create secret --namespace=wordpress generic mysql-pass --from-literal password="passw0rd"
+#minikube kubectl -- create secret --namespace=wordpress generic mysql-pass --from-literal password="passw0rd"
+minikube kubectl -- apply -f deployment/secret-data.yaml
 
 echo "Creating MySql pod..."
 minikube kubectl -- apply -f deployment/wordpress-mysql.yaml

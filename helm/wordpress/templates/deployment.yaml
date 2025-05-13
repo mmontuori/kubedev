@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Chart.Name }}-mysql"
+  namespace: {{ .Values.namespaceValue }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+        tier: mysql
+    spec:
+      containers:
+      - image: {{ .Values.image.mysql_image }}
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secret.name }}
+              key: {{ .Values.secret.keyname }}
+        - name: MYSQL_DATABASE
+          value: {{ .Values.db.dbname }}
+        - name: MYSQL_USER
+          value: {{ .Values.db.user }}
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secret.name }}
+              key: {{ .Values.secret.keyname }}
+        ports:
+        - containerPort: {{ .Values.service.dbport }}
+          name: mysql
+        volumeMounts:
+        - name: {{ .Values.volume.dbname }}
+          mountPath: {{ .Values.volume.dbMountPath }}
+      volumes:
+      - name: {{ .Values.volume.dbname }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volume.dbclaimname }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Chart.Name }}-web"
+  namespace: {{ .Values.namespaceValue }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+        tier: frontend
+    spec:
+      containers:
+      - image: {{ .Values.image.wordpress_image }}
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secret.name }}
+              key: {{ .Values.secret.keyname }}
+        - name: MYSQL_DATABASE
+          value: {{ .Values.db.dbname }}
+        - name: WORDPRESS_DB_USER
+          value: {{ .Values.db.dbname }}
+        ports:
+        - containerPort: {{ .Values.service.webport }}
+          name: wordpress
+        volumeMounts:
+        - name: {{ .Values.volume.wpname }}
+          mountPath: {{ .Values.volume.wpMountPath }}
+      volumes:
+      - name: {{ .Values.volume.wpname }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volume.wpclaimname }}

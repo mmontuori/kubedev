@@ -1,0 +1,30 @@
+replicaCount: 1
+namespaceValue: wordpress
+
+image:
+  mysql_image: mysql:8.0
+  wordpress_image: wordpress:6.2.1-apache
+  pullPolicy: IfNotPresent
+
+volume:
+  dbname: mysql-persistent-storage
+  wpname: wordpress-persistent-storage
+  dbclaimname: mysql-pv-claim
+  wpclaimname: wp-pv-claim
+  dbMountPath: /var/lib/mysql
+  wpMountPath: /var/www/html
+  path: /opt/kube/data
+  mountPath: /usr/share/nginx/html
+  capacity: 20Gi
+  
+service:
+  webport: 80
+  dbport: 3306
+
+secret:
+  name: "mysql-pass"
+  keyname: password
+
+db:
+  dbname: wordpress
+  user: wordpress
