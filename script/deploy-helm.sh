@@ -14,8 +14,8 @@ port="$4"
 helm install ${appname} --namespace ${namespace} --create-namespace ${helmdir}
 
 echo "waiging for containers to start..."
-while ! minikube kubectl -- get pods --namespace=${namespace} | grep ${appname} | grep Running; do
-    sleep 10
+while minikube kubectl -- get pods -n ${namespace} | awk '{ print $3 }' | grep -v STATUS | grep -v Running > /dev/null; do
+    sleep 5
 done
 
 echo "running: minikube kubectl -- port-forward --namespace=${namespace} --address=0.0.0.0 service/${appname} ${port}:80"

@@ -28,7 +28,7 @@ echo "Creating website pod..."
 minikube kubectl -- apply -f deployment/nginx-web-site.yaml
 
 echo "waiging for containers to start..."
-while ! minikube kubectl -- get pods --namespace=${namespace} | grep website | grep Running; do
+while minikube kubectl -- get pods -n website | awk '{ print $3 }' | grep -v STATUS | grep -v Running > /dev/null; do
     sleep 5
 done
 

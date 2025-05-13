@@ -30,7 +30,7 @@ echo "Creating WordPress pod..."
 minikube kubectl -- apply -f deployment/wordpress-web.yaml
 
 echo "waiging for containers to start..."
-while ! minikube kubectl -- get pods --namespace=wordpress | grep wordpress-web | grep Running; do
+while minikube kubectl -- get pods -n wordpress | awk '{ print $3 }' | grep -v STATUS | grep -v Running > /dev/null; do
     sleep 5
 done
 
