@@ -15,7 +15,7 @@ volume:
   wpMountPath: /var/www/html
   path: /opt/kube/data
   mountPath: /usr/share/nginx/html
-  capacity: 20Gi
+  capacity: 30Gi
   
 service:
   webport: 80
